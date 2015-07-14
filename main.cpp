@@ -10,5 +10,5 @@ int main(void) {
 
 void sugoroku_main() {
   board* b = new board();
-  b->readFile("./test.dat");
+  readFile(b, "./test.dat");
 }
