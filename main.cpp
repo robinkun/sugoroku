@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "board.h"
+#include "Sugoroku.h"
 
 void sugoroku_main();
 
@@ -9,6 +9,9 @@ int main(void) {
 }
 
 void sugoroku_main() {
-  board* b = new board();
-  readFile(b, "./test.dat");
+  Sugoroku* sugoroku = new Sugoroku("./test.dat");
+
+  sugoroku->sugorokuMain();
+
+  delete sugoroku;
 }

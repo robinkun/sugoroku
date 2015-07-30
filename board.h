@@ -1,83 +1,123 @@
 #pragma once
+#include <iostream>
 #include <stdio.h>
 #include <vector>
 #include <list>
 #include <string>
 #include <fstream>
-#include "masu.h"
+#include "block.h"
 #include "person.h"
 #include "utils.h"
 
 using namespace std;
 
 class board {
-  masu* root;
+  block* root;
   vector<person> persons;
+  list<block*> blocklist;
 
 public:
   board() {}
+  ~board() {
+    for(list<block*>::iterator i = blocklist.begin(); i != blocklist.end(); i++) {
+      delete *i;
+    }
+  }
+
+  list<block*>::iterator block_begin() {
+    return blocklist.begin();
+  }
+
+  list<block*>::iterator block_end() {
+    return blocklist.end();
+  }
+
   friend int readFile(board*, string);
 };
+
+
+
+
+
+list<block*>::iterator moveIterator(list<block*>::iterator i, int num) {
+  for(int j = 0; j < num; j++) i++;
+  return i;
+}
 
 int readFile(board* b, string dir) {
   ifstream ifs(dir);
   string str;
   char chr;
-  int type; // $B%^%9$NJ}8~$H%?%$%W(B
+  int type; // マスの方向とタイプ
   int dir_tmp;
   int x, y;
-  masu* ptr;
-  masu* current_ptr;
-  list<masu*> masulist;
+  block* ptr;
+
 
   if(ifs.fail()) return 1;
-  b->root = new masu(-1, -1, -1);
+  b->root = new block(-1, -1, -1);
   ptr = b->root;
 
-  for(int endflag = 0; !endflag;) {
-    str.resize(0);
-    for(ifs.get(chr); chr != ','; ifs.get(chr)) {
-      if(ifs.eof() || chr == '\n') exit(1);
-      str.append(1, chr);
-    }
-    type = stoi(str);
-    str.resize(0);
-    for(ifs.get(chr); chr != ','; ifs.get(chr)) {
-      if(ifs.eof() || chr == '\n') exit(1);
-      str.append(1, chr);
-    }
-    x = stoi(str);
-    str.resize(0);
-    for(ifs.get(chr); chr != ',' && chr != '\n' && !ifs.eof(); ifs.get(chr)) {
-      str.append(1, chr);
-    }
-    y = stoi(str);
+  try {
+    for(int endflag = 0; !endflag;) {
+      str.resize(0);
+      for(ifs.get(chr); chr != ','; ifs.get(chr)) {
+        if(chr == '\n') throw("file error");
+        str.append(1, chr);
+      }
+      type = stoi(str);
+      str.resize(0);
+      for(ifs.get(chr); chr != ','; ifs.get(chr)) {
+        if(ifs.eof() || chr == '\n') throw("file error");
+        str.append(1, chr);
+      }
+      x = stoi(str);
+      str.resize(0);
+      for(ifs.get(chr); chr != ',' && chr != '\n' && !ifs.eof(); ifs.get(chr)) {
+        str.append(1, chr);
+      }
+      y = stoi(str);
 
-    ptr = new masu(type, x, y);
-    masulist.push_back(ptr);
+      ptr = new block(type, x, y);
+      b->blocklist.push_back(ptr);
 
-    // $BFI$_Ht$P$7(B
-    for(ifs.get(chr); chr != '\n'; ifs.get(chr)) {
+      // 読み飛ばし
+      for(ifs.get(chr); chr != '\n'; ifs.get(chr)) {
+        if(ifs.eof()) endflag = 1;
+      }
+      ifs.get(chr);
       if(ifs.eof()) endflag = 1;
+      ifs.seekg(-1, std::ios::cur);
     }
+  } catch(string str) {
+    cout << str << endl;
+    exit(1);
   }
 
-  ifs.seekg(0);
-  list<masu*>::iterator masu_ite = masulist.begin();
 
-  for(int endflag = 0; !endflag; masu_ite++) {
-    // $BFI$_Ht$P$7(B
+  ifs = ifstream(dir);
+  list<block*>::iterator block_ite = b->blocklist.begin();
+
+  for(int endflag = 0; !endflag && block_ite != b->blocklist.end(); block_ite++) {
+    // 読み飛ばし
+    // type
     for(ifs.get(chr); chr != ','; ifs.get(chr)) {
-      if(ifs.eof() || chr == '\n') exit(1);
+      if(chr == '\n' || ifs.eof()) {
+        printf("file faze2 error");
+        exit(1);
+      }
     }
+    // x
     for(ifs.get(chr); chr != ','; ifs.get(chr)) {
-      if(ifs.eof() || chr == '\n') exit(1);
+      if(ifs.eof() || chr == '\n') printf("file faze2 error2");
     }
+    // y
     for(ifs.get(chr); chr != ',' && chr != '\n' && !ifs.eof(); ifs.get(chr)) {
       str.append(1, chr);
     }
 
     for(int direction = 0; direction < DIR_NUM; direction++) {
+      str.resize(0);
       for(ifs.get(chr); chr != ','; ifs.get(chr)) {
         if(chr == '\n') {
           direction = DIR_NUM;
@@ -90,8 +130,9 @@ int readFile(board* b, string dir) {
         }
         str.append(1, chr);
       }
-      ptr = masulist[stoi(str)];
-      for(ifs.get(chr); chr != ','; ifs.get(chr)) {
+      ptr = *moveIterator(b->blocklist.begin(), stoi(str));
+      str.resize(0);
+      for(ifs.get(chr); chr != ',' && direction != DIR_NUM; ifs.get(chr)) {
         if(chr == '\n') {
           direction = DIR_NUM;
           break;
@@ -104,20 +145,14 @@ int readFile(board* b, string dir) {
         str.append(1, chr);
       }
       dir_tmp = stoi(str);
-      (*masu_ite)->setNext(ptr, dir_tmp);
-      ptr->setPrev(*masu_ite, reverse_dir(dir_tmp));
+      (*block_ite)->setNext(ptr, dir_tmp);
+      ptr->setPrev(*block_ite, reverse_dir(dir_tmp));
     }
-
-    for(ifs.get(chr); chr != '\n'; ifs.get(chr)) {
-      if(ifs.eof()) endflag = 1;
-    }
-    /*ptr->setNext(new masu(type), direction);
-    // $BH?BPJ}8~(B
-    ptr->next(direction)->setPrev(ptr, reverse_dir(direction));
-    for(int dir = 0; dir < DIR_NUM; dir++) {
-    if(ptr->next(dir)) readLoop(ptr, ifs);
-    }*/
+    ifs.get(chr);
+    if(ifs.eof()) endflag = 1;
+    ifs.seekg(-1, std::ios::cur);
   }
+
   return 0;
 }
 

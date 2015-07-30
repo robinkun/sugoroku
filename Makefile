@@ -1,8 +1,8 @@
 COMPILER = g++
 CFLAGS   = -g -MMD -MP -Wall -Wextra -Winit-self -Wno-unused-parameter -Wfloat-equal -O2 -std=c++11
-LDFLAGS  =
+LDFLAGS  = -lncurses
 LIBS     =
-INCLUDE  = -I../include
+INCLUDE  =
 TARGET   = ./sugoroku
 OBJDIR   = ./obj
 ifeq "$(strip $(OBJDIR))" ""
