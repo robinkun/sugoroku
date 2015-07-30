@@ -5,7 +5,7 @@
 #include <list>
 #include <string>
 #include <fstream>
-#include "block.h"
+#include "block_list.h"
 #include "person.h"
 #include "utils.h"
 
@@ -58,40 +58,53 @@ int readFile(board* b, string dir) {
   b->root = new block(-1, -1, -1);
   ptr = b->root;
 
-  try {
-    for(int endflag = 0; !endflag;) {
-      str.resize(0);
-      for(ifs.get(chr); chr != ','; ifs.get(chr)) {
-        if(chr == '\n') throw("file error");
-        str.append(1, chr);
-      }
-      type = stoi(str);
-      str.resize(0);
-      for(ifs.get(chr); chr != ','; ifs.get(chr)) {
-        if(ifs.eof() || chr == '\n') throw("file error");
-        str.append(1, chr);
-      }
-      x = stoi(str);
-      str.resize(0);
-      for(ifs.get(chr); chr != ',' && chr != '\n' && !ifs.eof(); ifs.get(chr)) {
-        str.append(1, chr);
-      }
-      y = stoi(str);
-
-      ptr = new block(type, x, y);
-      b->blocklist.push_back(ptr);
-
-      // 読み飛ばし
-      for(ifs.get(chr); chr != '\n'; ifs.get(chr)) {
-        if(ifs.eof()) endflag = 1;
-      }
-      ifs.get(chr);
-      if(ifs.eof()) endflag = 1;
-      ifs.seekg(-1, std::ios::cur);
+  for(int endflag = 0; !endflag;) {
+    str.resize(0);
+    for(ifs.get(chr); chr != ','; ifs.get(chr)) {
+      if(chr == '\n') puts("file error");
+      str.append(1, chr);
     }
-  } catch(string str) {
-    cout << str << endl;
-    exit(1);
+    type = stoi(str);
+    str.resize(0);
+    for(ifs.get(chr); chr != ','; ifs.get(chr)) {
+      if(ifs.eof() || chr == '\n') puts("file error");
+      str.append(1, chr);
+    }
+    x = stoi(str);
+    str.resize(0);
+    for(ifs.get(chr); chr != ',' && chr != '\n' && !ifs.eof(); ifs.get(chr)) {
+      str.append(1, chr);
+    }
+    y = stoi(str);
+
+    switch(type) {
+    case 1:
+      ptr = new startBlock(type, x, y);
+      break;
+    case 2:
+      ptr = new goalBlock(type, x, y);
+      break;
+    case 3:
+      str.resize(0);
+      for(ifs.get(chr); chr != ','; ifs.get(chr)) {
+        if(ifs.eof() || chr == '\n') puts("file error");
+        str.append(1, chr);
+      }
+      ptr = new moveBlock(type, x, y, stoi(str));
+      break;
+    default:
+      ptr = new block(type, x, y);
+      break;
+    }
+    b->blocklist.push_back(ptr);
+
+    // 読み飛ばし
+    for(ifs.get(chr); chr != '\n'; ifs.get(chr)) {
+      if(ifs.eof()) endflag = 1;
+    }
+    ifs.get(chr);
+    if(ifs.eof()) endflag = 1;
+    ifs.seekg(-1, std::ios::cur);
   }
 
 
@@ -114,6 +127,12 @@ int readFile(board* b, string dir) {
     // y
     for(ifs.get(chr); chr != ',' && chr != '\n' && !ifs.eof(); ifs.get(chr)) {
       str.append(1, chr);
+    }
+
+    if((*block_ite)->type() == 3) {
+      for(ifs.get(chr); chr != ','; ifs.get(chr)) {
+        if(ifs.eof() || chr == '\n') printf("file faze2 error2");
+      }
     }
 
     for(int direction = 0; direction < DIR_NUM; direction++) {

@@ -2,17 +2,18 @@
 #include <string>
 #include "board.h"
 #include "Renderer.h"
+#include "blockImage.h"
 
 class Sugoroku {
   board* b;
   Renderer *r;
 
 public:
-
   Sugoroku(string directory) {
     b = new board();
     r = new Renderer(b);
     readFile(b, directory);
+    init_image();
   }
 
   ~Sugoroku() {

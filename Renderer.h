@@ -4,7 +4,6 @@
 #include "block.h"
 
 using namespace std;
-constexpr int BLOCK_SIZE = 3;
 
 class Renderer {
   board *b;
@@ -25,7 +24,14 @@ public:
   void render_block(block* bl) {
     int h = 1; // 枠の分1増やしとく
 
+    blockImage* img = bl->image();
     move(1 + bl->y()*BLOCK_SIZE, 1 + bl->x()*BLOCK_SIZE);
+    for(unsigned long i = 0; i < img->_image.size(); i++) {
+      for(unsigned long j = 0; j < img->_image.size(); j++) {
+        mvaddch(i+1 + bl->y()*BLOCK_SIZE, j+1 + bl->x()*BLOCK_SIZE, img->_image[i][j]);
+      }
+    }
+    /*
     switch(bl->type()) {
       case 0: // スタート
         mvprintw(h++ + bl->y()*BLOCK_SIZE, 1 + bl->x()*BLOCK_SIZE, "---");
@@ -42,12 +48,18 @@ public:
         mvprintw(h++ + bl->y()*BLOCK_SIZE, 1 + bl->x()*BLOCK_SIZE, "|+|");
         mvprintw(h++ + bl->y()*BLOCK_SIZE, 1 + bl->x()*BLOCK_SIZE, "---");
         break;
+      case -1: // 進む
+        mvprintw(h++ + bl->y()*BLOCK_SIZE, 1 + bl->x()*BLOCK_SIZE, "---");
+        mvprintw(h++ + bl->y()*BLOCK_SIZE, 1 + bl->x()*BLOCK_SIZE, "|1|");
+        mvprintw(h++ + bl->y()*BLOCK_SIZE, 1 + bl->x()*BLOCK_SIZE, "---");
+        break;
       default:
         mvprintw(h++ + bl->y()*BLOCK_SIZE, 1 + bl->x()*BLOCK_SIZE, "---");
         mvprintw(h++ + bl->y()*BLOCK_SIZE, 1 + bl->x()*BLOCK_SIZE, "| |");
         mvprintw(h++ + bl->y()*BLOCK_SIZE, 1 + bl->x()*BLOCK_SIZE, "---");
         break;
     }
+        mvprintw(h++ + bl->y()*BLOCK_SIZE, 1 + bl->x()*BLOCK_SIZE, "%d", img->_image.size());*/
   }
 
   void render_board() {

@@ -9,7 +9,7 @@ int main(void) {
 }
 
 void sugoroku_main() {
-  Sugoroku* sugoroku = new Sugoroku("./test.dat");
+  Sugoroku* sugoroku = new Sugoroku("./map.dat");
 
   sugoroku->sugorokuMain();
 

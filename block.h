@@ -1,6 +1,7 @@
 #pragma once
 #include "param.h"
 #include "person.h"
+#include "blockImage.h"
 #include <vector>
 
 class block {
@@ -20,6 +21,9 @@ public:
     _y = y;
   }
 
+  ~block() {
+  }
+
   void setHierarchy(int h) {_hierarchy = h;}
   void setNext(block* n, int index) {_next[index] = n;}
   void setPrev(block* p, int index) {_prev[index] = p;}
@@ -32,5 +36,9 @@ public:
   int y() {return _y;}
   block* next(int index) {return _next[index];}
   block* prev(int index) {return _prev[index];}
+
+  virtual blockImage* image() {
+    return &block_image[0];
+  }
 };
 
