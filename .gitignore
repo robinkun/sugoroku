@@ -1,4 +1,6 @@
 *.swp
 *.o
-./sugoroku
-./bin
+./sugoroku/*
+./bin/*
+*.d
+sugoroku
