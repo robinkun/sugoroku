@@ -9,7 +9,7 @@ void init_image() {
   block_image[i++].setDir("./image/default.dat");
   block_image[i++].setDir("./image/start.dat");
   block_image[i++].setDir("./image/goal.dat");
-  block_image[i++].setDir("./image/default.dat"); // mv_block
+  block_image[i++].setDir("./image/plus.dat"); // mv_block
   block_image[i++].setDir("./image/minus.dat"); // mv_block
   //block_image[i++].setDir("");
 

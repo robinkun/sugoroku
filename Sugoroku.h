@@ -22,7 +22,8 @@ public:
   }
 
   int sugorokuMain() {
-    while(1)
+    while(1) {
       r->render_board();
+    }
   }
 };
