@@ -1,5 +1,5 @@
 COMPILER = g++
-CFLAGS   = -g -MMD -MP -Wall -Wextra -Winit-self -Wno-unused-parameter -Wfloat-equal -O2 -std=c++11
+CFLAGS   = -g -MMD -MP -Wall -Wextra -Winit-self -Wno-unused-parameter -Wfloat-equal -O2 -std=c++14
 LDFLAGS  = -lncurses
 LIBS     =
 INCLUDE  =

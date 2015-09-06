@@ -45,7 +45,7 @@ list<block*>::iterator moveIterator(list<block*>::iterator i, int num) {
 }
 
 int readFile(board* b, string dir) {
-  ifstream ifs(dir);
+  ifstream ifs;
   string str;
   char chr;
   int type; // マスの方向とタイプ
@@ -53,7 +53,7 @@ int readFile(board* b, string dir) {
   int x, y;
   block* ptr;
 
-
+  ifs.open(dir);
   if(ifs.fail()) return 1;
   b->root = new block(-1, -1, -1);
   ptr = b->root;
@@ -107,8 +107,8 @@ int readFile(board* b, string dir) {
     ifs.seekg(-1, std::ios::cur);
   }
 
-
-  ifs = ifstream(dir);
+  ifs.close();
+  ifs.open(dir);
   list<block*>::iterator block_ite = b->blocklist.begin();
 
   for(int endflag = 0; !endflag && block_ite != b->blocklist.end(); block_ite++) {
